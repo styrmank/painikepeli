@@ -1,0 +1,106 @@
+﻿<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Painikepeli</title>
+    <meta name="description" content="Painikepeli">
+    <meta name="author" content="Kasper Styrman">
+
+    <!--<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+
+</head>
+
+<body>
+   <div id="clicker">
+       <button v-on:click="sendClick" :disabled=clickerIsDisabled>Click me!</button>
+   </div>
+   <div id="stats">
+       <p>Points: {{points}}</p>
+       <p>Next prize in {{remainingClicks}} clicks</p>
+   </div>
+    <div id="reset">
+        <button v-on:click="resetPoints" v-if=resetIsVisible :disabled=resetIsDisabled >
+            Reset points
+        </button>
+    </div>
+
+    <script>
+
+        if (localStorage.getItem("totalPoints") == null) {
+            localStorage.setItem("totalPoints","20")
+        }
+
+        var stats = new Vue({
+            el: "#stats",
+            data: {
+                points: Number(localStorage.getItem("totalPoints")),
+                remainingClicks: "-"
+            }
+        })
+
+        var clicker = new Vue({
+            el: "#clicker",
+            methods: {
+                sendClick: function () {
+                    connectToServer()
+                }
+            },
+            computed: {
+                clickerIsDisabled() {
+                    return stats.points <= 0
+                }
+            }
+        })
+
+        var reset = new Vue({
+            el: "#reset",
+            methods: {
+                resetPoints: function () {
+                    stats.points = 20
+                    localStorage.setItem("totalPoints", `${stats.points}`)
+                }
+            },
+            computed: {
+                resetIsDisabled() {
+                    return stats.points > 0
+                },
+                resetIsVisible() {
+                    return stats.points <= 0
+                }
+            }
+        })
+            
+
+        function connectToServer() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var data = JSON.parse(this.responseText)
+                    updateView(data)
+                }
+            }
+            stats.points -= 1
+            localStorage.setItem("totalPoints", `${stats.points}`)
+            xhttp.open("GET", "clickhandler", true)
+            xhttp.send();
+        }
+
+        function updateView(data) {
+            if (data.win) {
+                alert("Congratulations! You won " + data.award + " points.")
+            }
+            stats.points += data.award;
+            localStorage.setItem("totalPoints", `${stats.points}`)
+            stats.remainingClicks = data.remainingClicks
+
+        }
+
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "painikepeli",
+  "version": "1.0.0",
+  "description": "A simple app where users click a button to score points",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/styrmank/painikepeli.git"
+  },
+  "keywords": [
+    "clicker"
+  ],
+  "author": "Kasper Styrman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/styrmank/painikepeli/issues"
+  },
+  "homepage": "https://github.com/styrmank/painikepeli#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "simple-json-db": "^1.2.2"
+  }
+}
